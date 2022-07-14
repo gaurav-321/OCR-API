@@ -25,10 +25,8 @@ def home():
             frame = cv2.imread(os.path.join(app.config['UPLOAD_FOLDER'], files[file].filename))
             for word in res.json()['responses'][0]['textAnnotations'][1:]:
                 ver = word['boundingPoly']['vertices']
-                print(ver)
                 cv2.rectangle(frame, (ver[0]["x"], ver[0]["y"]), (ver[2]["x"], ver[2]["y"]), (0, 0, 255), 1)
             cv2.imwrite(os.path.join(app.config['UPLOAD_FOLDER'], files[file].filename), frame)
-        flash("File uploaded successfully")
         return jsonify(data)
 
     else:
