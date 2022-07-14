@@ -15,15 +15,50 @@
     <meta charset="UTF-8">
     <title>Ocr App</title>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/layout.css') }}">
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css"/>
 </head>
 <body>
 <script>
+    Dropzone.autoDiscover = false;
     //document onready
     $(document).ready(function () {
         $('.carousel').carousel({
             interval: 0
         })
         set_progress(0);
+        $("#carouselExampleIndicators").hide();
+        var myDropZone = new Dropzone("#dropzonetest", {
+            url: "/",
+            parralelUploads: 1,
+            uploadMultiple: true,
+            success: function (file, response) {
+                $("#dropzone-full").hide();
+                $("#carouselExampleIndicators").show();
+                //for each response
+                $.each(response, function (index, value) {
+                    //append the response to the div
+                    if (index === 0) {
+                        $("#carousel-container").html(
+                            '<div class="carousel-item active">' +
+                            '<img class="d-block w-100" src="' + '/upload?file=' + value[0] + '">' +
+                            '</div>'
+                        );
+                    } else {
+                        $("#carousel-container").append(
+                            '<div class="carousel-item">' +
+                            '<img class="d-block w-100" src="' + '/upload?file=' + value[0] + '">' +
+                            '</div>'
+                        );
+                    }
+                });
+            },
+            acceptedFiles: '.png, .jpg, .jpeg, .pdf',
+            autoProcessQueue: false,
+        })
+        $("#dropzone-submit").click(function () {
+            myDropZone.processQueue();
+        });
     });
 
     function add_row(text) {
@@ -43,51 +78,51 @@
         $("#progress-bar").text(num + "%");
     }
 
+
 </script>
+<div class="flash-message-flask">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} w-100 text-center mt-2">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% else %}
+    <span class="alert mt-2" style="visibility:hidden;"> Spacer</span>
+
+    {% endif %}
+    {% endwith %}
+</div>
 <div class="container-fluid" style="min-height: 500px;">
     <div class="row">
         <div class="col-md-6 col-sm-12 text-center">
-            <div class="card">
+            <div class="card" id="dropzone-full">
                 <div class="card-body">
                     <h5 class="card-title">Upload Image/PDF</h5>
                     <div class="form-group">
-                        <form action="/" method="post">
-                            <input name=file[] type="file" class="form-control-file" id="image"
-                                   style="margin-left: 37%"
-                                   multiple>
+                        <form action="/" method="post" id="dropzonetest" class="dropzone">
 
-                            <div class="progress mt-4 mb-4">
-                                <div id="progress-bar" role="progressbar" class="progress-bar" style="width: 0%;"
-                                     aria-valuenow="0"
-                                     aria-valuemin="0" aria-valuemax="100">0%
-                                </div>
-                            </div>
-                            <input type="submit" class="btn btn-primary w-100" value="submit"/>
+
                         </form>
+                        <div class="progress mt-4 mb-4">
+                            <div id="progress-bar" role="progressbar" class="progress-bar" style="width: 0%;"
+                                 aria-valuenow="0"
+                                 aria-valuemin="0" aria-valuemax="100">0%
+                            </div>
+                        </div>
+                        <input type="submit" id="dropzone-submit" class="btn btn-primary w-100" value="Submit"/>
                     </div>
 
                 </div>
             </div>
             <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 
-                <button class="btn btn-primary mt-3 p-2" onclick="$('.carousel').carousel('prev')">Prev</button>
-                <button class="btn btn-primary mt-3 p-2" onclick="$('.carousel').carousel('next')">Next</button>
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img class="d-block w-100"
-                             src="https://media.istockphoto.com/photos/red-stamp-on-a-white-background-temporary-picture-id1072055834"
-                             alt="First slide">
-                    </div>
-                    <div class="carousel-item">
-                        <img class="d-block w-100"
-                             src="https://media.istockphoto.com/photos/red-stamp-on-a-white-background-temporary-picture-id1072055834"
-                             alt="Second slide">
-                    </div>
-                    <div class="carousel-item">
-                        <img class="d-block w-100"
-                             src="https://media.istockphoto.com/photos/red-stamp-on-a-white-background-temporary-picture-id1072055834"
-                             alt="Third slide">
-                    </div>
+                <button class="btn btn-primary mt-3 p-2 w-20" onclick="$('.carousel').carousel('prev')">Prev</button>
+                <button class="btn btn-primary mt-3 p-2 w-20" onclick="$('.carousel').carousel('next')">Next</button>
+                <div class="carousel-inner" id="carousel-container">
+
                 </div>
 
             </div>
