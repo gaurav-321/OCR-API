@@ -15,7 +15,7 @@ Clone the repository
 
 Copy code
 ```
-git clone https://github.com/[username]/OCR-API.git
+git clone https://github.com/gaurav-321/OCR-API.git
 ```
 Install the required packages
 ```
