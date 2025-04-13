@@ -43,6 +43,7 @@ Here’s how you can use the OCR-API to extract text from an image:
 ```python
 import requests
 import json
+import base64
 
 def requestOCR(image_path):
     with open(image_path, 'rb') as image_file:
